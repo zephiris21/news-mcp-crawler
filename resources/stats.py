@@ -38,18 +38,15 @@ def register_stats(mcp):
         
         return stats
     
-    # 통계 업데이트 훅 추가
-    @mcp.hooks.after_tool_call("search_news")
-    async def after_search(ctx, result):
-        usage_stats["search_count"] += 1
-        return result
-    
-    @mcp.hooks.after_tool_call("fetch_article")
-    async def after_fetch(ctx, result):
-        usage_stats["fetch_count"] += 1
-        return result
-    
-    @mcp.hooks.after_tool_call("analyze_article")
-    async def after_analysis(ctx, result):
-        usage_stats["analysis_count"] += 1
-        return result
+    # 통계 업데이트 함수 추가
+    # 도구 데코레이터 옵션으로 설정하거나 별도 함수로 구현
+    @mcp.tool("update_stats")
+    async def update_stats(tool_name: str) -> bool:
+        """내부 통계 업데이트용 도구"""
+        if tool_name == "search_news":
+            usage_stats["search_count"] += 1
+        elif tool_name == "fetch_article":
+            usage_stats["fetch_count"] += 1
+        elif tool_name == "analyze_article":
+            usage_stats["analysis_count"] += 1
+        return True
