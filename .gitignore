@@ -1,0 +1,59 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+.venv/
+ENV/
+env/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# VSCode settings
+.vscode/
+
+# Pytest cache
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# coverage reports
+htmlcov/
+.coverage
+.tox/
+
+# pip log
+pip-log.txt
+
+# distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# logs
+*.log
+
+# environment variables or secrets
+.env.*
+*.env
+
+# pyinstaller
+*.spec
+
+# IDEs
+.idea/
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS files
+.DS_Store
+Thumbs.db
