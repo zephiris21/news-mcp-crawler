@@ -5,8 +5,6 @@ from urllib.parse import quote, urljoin, urlsplit
 from datetime import datetime
 from crawlers.base_crawler import BaseCrawler
 from config import REUTERS_MAX_PAGES
-import time
-import asyncio
 
 class ReutersCrawler(BaseCrawler):
     """Reuters 크롤러"""
@@ -16,38 +14,29 @@ class ReutersCrawler(BaseCrawler):
         self.name = "Reuters"
         self.base_url = "https://www.reuters.com/pf/api/v3/content/fetch/articles-by-search-v2"
         self.max_pages = REUTERS_MAX_PAGES
-
+    
     async def fetch_articles(self, query):
         """Reuters에서 기사 검색"""
         articles = []
         size = 20
         offset = 0
-
+        
         for page in range(self.max_pages):
-            # 🔧 query를 dict로 만들고 str→replace로 JSON 형식화
-            query_dict = {
-                "keyword": query,
-                "offset": offset,
-                "orderby": "display_date:desc",
-                "size": size,
-                "website": "reuters"
-            }
             params = {
-                "query": str(query_dict).replace("'", '"'),
-                "d": "278",               # 🔧 작동 버전의 d 값 유지
+                "query": f'{{"keyword":"{quote(query)}","offset":{offset},"orderby":"display_date:desc","size":{size},"website":"reuters"}}',
+                "d": "264",
                 "mxId": "00000000",
                 "_website": "reuters"
             }
-
-            # fetch_with_delay 호출
+            
             data = await self.fetch_with_delay(self.base_url, params=params)
             if not data or not isinstance(data, dict) or 'result' not in data:
                 break
-
+                
             page_articles = data['result'].get('articles', [])
             if not page_articles:
                 break
-
+                
             for article in page_articles:
                 thumbnail_data = article.get("thumbnail", {})
                 articles.append({
@@ -59,16 +48,12 @@ class ReutersCrawler(BaseCrawler):
                     "category": article.get("category", ""),
                     "source": "Reuters"
                 })
-
+            
             offset += size
             if page == self.max_pages - 1:
                 break
-
-            # Optional: 서버 부담을 줄이기 위한 딜레이
-            await asyncio.sleep(1)
-
+        
         return articles
-
     
     async def fetch_article_details(self, url):
         """Reuters 기사의 상세 내용 가져오기"""
